@@ -13,8 +13,7 @@ Se realizará la siguiente validación:
 El código del Producto deberá tener al menos tres cifras y será único (No puede repetirse).
 El nombre del producto deberá tener al menos tres caracteres.
 Si se intenta registrar un producto cuyo código ya está registrado se avisará al usuario que el producto ya está y en vez de duplicar el registro, se efectuará la edición del mismo actualizando las cantidades.
-Por ejemplo si ya estaba registrado el producto de código 094 que es Yerba y hay en stock 10 kilos a precio $150 y el usuario quiere ingresar nuevamente
-un producto 094 Yerba con cantidad 15 kilos y precio 180, el sistema avisará que el producto ya existe y de continuar se efectuará el incremento de la cantidad en stock agregando a los 10 kilos existentes los 15 kilos que estoy agregando, el precio se ajustará al nuevo valor ingresado y se calculará nuevamente el total para el producto con el nuevo precio .
+Por ejemplo si ya estaba registrado el producto de código 094 que es Yerba y hay en stock 10 kilos a precio $150 y el usuario quiere ingresar nuevamente un producto 094 Yerba con cantidad 15 kilos y precio 180, el sistema avisará que el producto ya existe y de continuar se efectuará el incremento de la cantidad en stock agregando a los 10 kilos existentes los 15 kilos que estoy agregando, el precio se ajustará al nuevo valor ingresado y se calculará nuevamente el total para el producto con el nuevo precio .
 Una Interfaz podría ser como:
 Cada Registro tendrá además un botón Eliminar para poder Borrar un producto del stock y un botón Editar que permita modificar los valores registrados en el precio, la cantidad o el iva del producto.
 Se contará con una función Ordenar, la que se ejecutará al hacer click en el título de una columna, la que ordenará la misma según ese criterio, por ejemplo si se hace clic en la columna Descripción, se ordenará la tabla en forma creciente según ese criterio.
