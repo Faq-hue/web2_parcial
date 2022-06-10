@@ -1,180 +1,223 @@
-if (localStorage.getItem("alumnos") !== null) {
-    dibujarTabla()
+if (localStorage.getItem("productos") !== null) {
+  dibujarTabla();
 }
 
 function registar() {
+  let list = JSON.parse(localStorage.getItem("productos"));
 
-    let list = JSON.parse(localStorage.getItem("alumnos"))
+  if (list === null) {
+    list = [];
+  }
 
-    if (list === null) {
-        list = []
-    }
+  if (verificar(list)) {
+    return;
+  }
 
+  //subtotal  = precio * cantidad + precio * cantidad * iva
+  const precio = Number(document.getElementById("precio").value);
+  const cantidad = Number(document.getElementById("cantidad").value);
+  const iva = Number(document.getElementById("iva").value);
+  const subtotal = precio * cantidad + precio * cantidad * iva;
 
-    if (verificar()) {
-        return
-    }
+  const pruducto = {
+    codigo: document.getElementById("codigo").value,
+    nombre: document.getElementById("nombre").value,
+    descripcion: document.getElementById("descripcion").value,
+    marca: document.getElementById("marca").value,
+    precio: precio,
+    cantidad: cantidad,
+    iva: iva,
+    subtotal: subtotal,
+  };
 
-    const peso = document.getElementById("peso").value
-    const altura = document.getElementById("altura").value
-    const inc = calcularINC(Number(peso), Number(altura))
+  list.push(pruducto);
 
-    // Masculino -> 1, Femenino -> 2
-    const alumno = {
-        apellido: document.getElementById("apellido").value,
-        legajo: document.getElementById("legajo").value,
-        sexo: document.getElementById("sexo").value,
-        peso: peso,
-        altura: altura,
-        inc: inc
-    }
+  localStorage.setItem("productos", JSON.stringify(list));
 
-    list.push(alumno)
-
-    localStorage.setItem("alumnos", JSON.stringify(list))
-
-    dibujarTabla();
+  //TODO: refactor dibujarTabla
+  dibujarTabla();
 }
 
-function borrar(legajo) {
-    let list = JSON.parse(localStorage.getItem("alumnos"))
+function borrar(codigo) {
+  let list = JSON.parse(localStorage.getItem("productos"));
 
-    list.forEach((alumno, index) => {
-        if (alumno.legajo == legajo) {
-            list.splice(index, 1)
-        }
-    })
-    localStorage.setItem("alumnos", JSON.stringify(list))
-    dibujarTabla()
+  list.forEach((producto, index) => {
+    if (producto.codigo == codigo) {
+      list.splice(index, 1);
+    }
+  });
+  localStorage.setItem("productos", JSON.stringify(list));
+  dibujarTabla();
 }
 
-function editar(legajo) {
-    let form = document.getElementById("editForm")
-    form.innerHTML = `<form>
-                <h1>Editar Alumno</h1>
+function editar(codigo) {
+  let form = document.getElementById("editForm");
+  form.innerHTML = `<form>
+                <h1>Editar Producto</h1>
                 <div class="mb-3">
-                    <label for="apellido" class="form-label">Apellido</label>
-                    <input type="text" class="form-control" name="apellido" id="Eapellido"
-                        placeholder="ingrese el Apellido">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" name="nombre" id="Enombre"
+                        placeholder="ingrese el nombre">
                 </div>
+            
                 <div class="mb-3">
-                    <label for="sexo">Sexo:</label>
-                    <select class="form-select" id="Esexo">
-                        <option selected value="1">Masculino</option>
-                        <option value="2">Femenino</option>
+                    <label for="descripcion" class="form-label">Descripcion</label>
+                    <input type="text" class="form-control" name="descripcion" id="Edescripcion"
+                        placeholder="ingrese el descripcion">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="marca" class="form-label">Marca</label>
+                    <input type="text" class="form-control" name="marca" id="Emarca"
+                        placeholder="ingrese la marca">
+                </div>
+
+                <div class="mb-3">
+                    <label for="precio" class="form-label">Precio</label>
+                    <input type="text" class="form-control" name="precio" id="Eprecio"
+                        placeholder="ingrese la precio">
+                </div>
+
+                <div class="mb-3">
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                    <input type="text" class="form-control" name="cantidad" id="Ecantidad"
+                        placeholder="ingrese la cantidad">
+                </div>
+
+                <div class="mb-3">
+                    <label for="iva">IVA</label>
+                    <select class="form-select" id="iva">
+                        <option selected value="0.1">10%</option>
+                        <option value="0.21">21%</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label for="peso" class="form-label">Peso en Kg</label>
-                    <input type="number" class="form-control" name="peso" id="Epeso" placeholder="ingrese el Peso en Kg">
+                    <input type="button" class="btn btn-success" value="Actualizar producto" onclick="registarEdicion(${codigo})">
                 </div>
-
-                <div class="mb-3">
-                    <label for="altura" class="form-label">Altura en CM</label>
-                    <input type="number" class="form-control" name="altura" id="Ealtura"
-                        placeholder="ingrese la Altura en CM">
-                </div>
-
-                <div class="mb-3">
-                    <input type="button" class="btn btn-success" value="Actualizar alumno" onclick="registarEdicion(${legajo})">
-                </div>
-            </form>`
+            </form>`;
 }
 
-function registarEdicion(legajo) {
-    let list = JSON.parse(localStorage.getItem("alumnos"))
-    let alumno
-    list.forEach(e => { if (e.legajo == legajo) { alumno = e } })
-    delete (legajo)
-    alumno.apellido = document.getElementById("Eapellido").value
-    alumno.peso = document.getElementById("Epeso").value
-    alumno.sexo = document.getElementById("Esexo").value
-    alumno.altura = document.getElementById("Ealtura").value
-
-    if(alumno.apellido.length < 3){
-        alert("El apellido debe tener al menos 3 caracteres")
-        document.getElementById("editForm").innerHTML = ""
-        return
+function registarEdicion(codigo) {
+  let list = JSON.parse(localStorage.getItem("productos"));
+  let producto;
+  list.forEach((e) => {
+    if (e.codigo == codigo) {
+      producto = e;
     }
-    if(Number(alumno.peso) == 0 || Number(alumno.altura) == 0){
-        alert("El peso y la altura deben ser mayores que 0")
-        document.getElementById("editForm").innerHTML = ""
-        return
-    }
+  });
+
+  producto.nombre = document.getElementById("Enombre").value;
+  producto.descripcion = document.getElementById("Edescripcion").value;
+  producto.marca = document.getElementById("Emarca").value;
+  producto.precio = Number(document.getElementById("Eprecio").value);
+  producto.cantidad = Number(document.getElementById("Ecantidad").value);
+  producto.iva = Number(document.getElementById("iva").value);
 
 
-    localStorage.setItem("alumnos",JSON.stringify(list))
-    dibujarTabla()
-    document.getElementById("editForm").innerHTML = ""
+  localStorage.setItem("productos", JSON.stringify(list));
+  dibujarTabla();
+  document.getElementById("editForm").innerHTML = "";
 }
 
 function dibujarTabla() {
-    let tbody = document.getElementById("tableBody")
-    let pesoTotal = document.getElementById("calPesoTotal")
-    let list = JSON.parse(localStorage.getItem("alumnos"))
-    let counter = 0
-    let template = ""
-    tbody.innerHTML = ""
-    list.forEach(alumno => {
-        if (alumno.inc <= 25) { template += "<tr class='table-primary'>" }
-        if (alumno.inc > 25 && alumno.inc <= 30) {
-            template += "<tr class='table-warning'>"
-            counter++
-        }
-        if (alumno.inc > 30) {
-            template += "<tr class='table-danger'>"
-            counter++
-        }
-        tbody.innerHTML += template + `<td>${alumno.apellido}</td>
-                                <td>${alumno.legajo}</td>
-                                <td>${alumno.peso}</td>
-                                <td>${alumno.altura}</td>
-                                <td>${alumno.sexo == 1 ? "Masculino" : "femenino"}</td>
-                                <td>${alumno.inc}</td><td>
-                                <input type="button" class="btn btn-danger" value="Borrar" onclick="borrar(${alumno.legajo})">
-                                <input type="button" class="btn btn-warning" value="Editar" onclick="editar(${alumno.legajo})">
-                                </td></tr>`
-    })
+  let tbody = document.getElementById("tableBody");
+  let totalStock = document.getElementById("totalStock");
+  let list = JSON.parse(localStorage.getItem("productos"));
+  let total = 0;
+  let template = "";
 
-    pesoTotal.innerHTML = counter
+  tbody.innerHTML = "";
 
+  list.forEach((producto) => {
+    if (producto.iva == 0.1) {
+      template += `<tr class='table-primary'>`;
+    } else {
+      template += `<tr class='table-warning'>`;
+    }
+
+    tbody.innerHTML +=
+      template +
+      `<td>${producto.codigo}</td>
+                                <td>${producto.nombre}</td>
+                                <td>${producto.descripcion}</td>
+                                <td>${producto.marca}</td>
+                                <td>${producto.precio}</td>
+                                <td>${producto.cantidad}</td>
+                                <td>${Number(producto.iva) * 100}%</td>
+                                <td>${producto.subtotal}</td><td>
+                                <input type="button" class="btn btn-danger" value="Borrar" onclick="borrar(${
+                                  producto.codigo
+                                })">
+                                <input type="button" class="btn btn-warning" value="Editar" onclick="editar(${
+                                  producto.codigo
+                                })">
+                                </td></tr>`;
+    total += producto.cantidad;
+  });
+
+  totalStock.innerHTML = total;
 }
 
-function calcularINC(peso, altura) {
-    const alturaM = altura / 100
-    return peso / (alturaM * alturaM)
+function verificar(list) {
+  const codigo = document.getElementById("codigo").value;
+  const nombre = document.getElementById("nombre").value;
+  const cantidad = Number(document.getElementById("cantidad").value);
+  const marca = document.getElementById("marca").value;
+  const precio = Number(document.getElementById("precio").value);
+
+  let aux = false;
+  /*
+        verificar:
+            nombre > 3 letras
+            cantidad > 0
+            codigo debete terner al menos 3 cifras y unico
+            marca > 3 letras
+            precio > 0
+    */
+
+  if (!longitud(3, codigo)) {
+    alert("El codigo debe tener al menos 3 caracteres");
+    return true;
+  }
+
+  list.forEach((producto) => {
+    if (producto.codigo == codigo) {
+      alert("El codigo ya existe");
+      aux = true;
+    }
+  });
+
+  if (aux == true) {
+    return true;
+  }
+
+  if (!longitud(3, nombre)) {
+    alert("El nombre debe tener al menos 3 caracteres");
+    return true;
+  }
+
+  if (!longitud(3, marca)) {
+    alert("La marca debe tener al menos 3 caracteres");
+    return true;
+  }
+
+  if (cantidad == 0) {
+    alert("La cantidad debe ser mayor que 0");
+    return true;
+  }
+
+  if (precio == 0) {
+    alert("El precio debe ser mayor que 0");
+    return true;
+  }
+
+  return false;
 }
 
-function verificar() {
-    const apellido = document.getElementById("apellido").value
-    const legajo = document.getElementById("legajo").value
-    const peso = document.getElementById("peso").value
-    const altura = document.getElementById("altura").value
-    list = JSON.parse(localStorage.getItem("alumnos"))
-    let aux = false
-
-
-    //Si sobra arreglar
-
-    if (apellido.length < 3) {
-        alert("El apellido debe tener como minimo 3 caracteres")
-        aux = true
-    }
-
-    if (list !== null) {
-        list.forEach(alumno => {
-            if (alumno.legajo == legajo) {
-                alert("El legajo ya esta registrado")
-                aux = true
-            }
-        })
-    }
-
-    if (Number(peso) == 0 || Number(altura) == 0) {
-        alert("El peso y la altura deben ser mayores a 0")
-        aux = true
-    }
-
-    return aux
+function longitud(longitud, cadena) {
+  if (cadena.length < longitud) {
+    return false;
+  }
+  return true;
 }
