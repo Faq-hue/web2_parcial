@@ -7,7 +7,7 @@ package server;
 
 //import com.google.gson.Gson;
 //import static com.iw2.core.Util.Sout;
-//import dao.libroDAO;
+import dao.ProductoDAO;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -18,8 +18,8 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
-import model.ProductoDTO;
-//import Util.*;
+
+import dto.ProductoDTO;
 
 /**
  * @author CARLOMAGNO
@@ -103,10 +103,11 @@ public class administradorSocket extends Thread {
 
           if (hacer.equalsIgnoreCase("Listar")) {
             ProductoDTO lib = new ProductoDTO();
-            libroDAO ldao = new libroDAO();
+            ProductoDAO ldao = new ProductoDAO();
             List<ProductoDTO> listadoLibros;
             listadoLibros = ldao.readAll();
             ProductoDTO libro = new ProductoDTO();
+            //TODO agregar GSON
             Gson gson = new Gson();
             String listadoJSON = "[";
 
@@ -146,7 +147,7 @@ public class administradorSocket extends Thread {
           if (hacer.equalsIgnoreCase("Listar")) {
             Sout("estoy en Listar del Post");
             ProductoDTO lib = new ProductoDTO();
-            libroDAO ldao = new libroDAO();
+            ProductoDAO ldao = new ProductoDAO();
             List<ProductoDTO> listadoLibros;
             listadoLibros = ldao.readAll();
             ProductoDTO libro = new ProductoDTO();
@@ -170,7 +171,7 @@ public class administradorSocket extends Thread {
           if (hacer.trim().equalsIgnoreCase("Buscar")) {
             Sout("estoy en Buscar del Post");
             ProductoDTO lib = new ProductoDTO();
-            libroDAO ldao = new libroDAO();
+            ProductoDAO ldao = new ProductoDAO();
             List<ProductoDTO> listadoLibros;
             Gson gson = new Gson();
             String pp = req.getParametrosPost();
