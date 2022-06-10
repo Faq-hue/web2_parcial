@@ -6,7 +6,7 @@
 package server;
 
 //import com.google.gson.Gson;
-//import static com.iw2.core.Util.Sout;
+//import static com.iw2.core.Util. System.out.println;
 import dao.ProductoDAO;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -107,7 +107,7 @@ public class administradorSocket extends Thread {
             List<ProductoDTO> listadoLibros;
             listadoLibros = ldao.readAll();
             ProductoDTO libro = new ProductoDTO();
-            //TODO agregar GSON
+            // TODO agregar GSON
             Gson gson = new Gson();
             String listadoJSON = "[";
 
@@ -119,7 +119,7 @@ public class administradorSocket extends Thread {
             listadoJSON = listadoJSON.substring(0, listadoJSON.length() - 1);
             listadoJSON += "]";
             // resp.enviarRespuestaDatos(200, resp.getInitPage("Hola Mundo !!!"));
-            Sout(gson.toJson((ProductoDTO) lib));
+            System.out.println(gson.toJson((ProductoDTO) lib));
             PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) lib));
             resp.imprimirSalida(resp.getHeader());
             resp.imprimirSalida(listadoJSON);
@@ -138,14 +138,14 @@ public class administradorSocket extends Thread {
       // EMPEZAMOS EL ANALISIS DE POST
 
       if (req.getMetodo().trim().equalsIgnoreCase("POST")) {
-        Sout("estoy en Post");
+        System.out.println("estoy en Post");
         if (req.getAccion() != null) {
           String hacer = req.getAccion();
 
           // ANALIZAMOS LAS ACCIONES
 
           if (hacer.equalsIgnoreCase("Listar")) {
-            Sout("estoy en Listar del Post");
+            System.out.println("estoy en Listar del Post");
             ProductoDTO lib = new ProductoDTO();
             ProductoDAO ldao = new ProductoDAO();
             List<ProductoDTO> listadoLibros;
@@ -162,14 +162,14 @@ public class administradorSocket extends Thread {
             listadoJSON = listadoJSON.substring(0, listadoJSON.length() - 1);
             listadoJSON += "]";
             // resp.enviarRespuestaDatos(200, resp.getInitPage("Hola Mundo !!!"));
-            Sout(gson.toJson((ProductoDTO) lib));
+            System.out.println(gson.toJson((ProductoDTO) lib));
             PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) lib));
             resp.imprimirSalida(resp.getHeader());
             resp.imprimirSalida(listadoJSON);
           } // no piden ninguna accion enviamos un archivo, por defecto es index.html
 
           if (hacer.trim().equalsIgnoreCase("Buscar")) {
-            Sout("estoy en Buscar del Post");
+            System.out.println("estoy en Buscar del Post");
             ProductoDTO lib = new ProductoDTO();
             ProductoDAO ldao = new ProductoDAO();
             List<ProductoDTO> listadoLibros;
@@ -188,7 +188,7 @@ public class administradorSocket extends Thread {
             listadoJSON += "]";
 
             // resp.enviarRespuestaDatos(200, resp.getInitPage("Hola Mundo !!!"));
-            Sout(gson.toJson((ProductoDTO) lib));
+            System.out.println(gson.toJson((ProductoDTO) lib));
             PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) lib));
             resp.imprimirSalida(resp.getHeader());
             resp.imprimirSalida(listadoJSON);
