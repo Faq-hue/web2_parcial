@@ -23,15 +23,12 @@ public class HttpRequest {
   private static BufferedReader buffer;
   private String[] parametros = null;
   private String[] HttpRequest;
-  private String parametro = null;
   private String metodoPedido;
   private String linea;
   private String httpPedido;
   private String header;
-  private String NEW_LINE = "\r\n";
   private String accion;
-  private String SITE_NAME = "api";
-
+  
   public HttpRequest(String flujoentrada) throws IOException {
     httpPedido = flujoentrada;
     System.out.println(httpPedido);
@@ -128,35 +125,10 @@ public class HttpRequest {
 
   public String getHeaderBody() throws IOException {
     String headerBody = null;
-    int posicionDatos;
     while ((linea = buffer.readLine()) != null && (linea.length() != 0)) {
       headerBody += "HTTP-HEADER: " + linea + "\n\r";
     }
     return headerBody;
-  }
-
-  /**
-   * Funcion que envia un archivo Json al que realizo la peticion
-   * 
-   * @param json es el archivo json que queremos enviar
-   * @param ps   es el flujo de salida
-   * @throws IOException
-   */
-
-  public void enviarJson(String json, PrintStream ps) {
-    try {
-      ps.println("HTTP/1.1 200 OK");
-      ps.println("Content-Type: application/json");
-      ps.println("Content-Length: " + json.length());
-      ps.println("Connection: close");
-      ps.println("");
-      ps.println(json);
-      ps.flush();
-      ps.close();
-    } catch (Exception e) {
-      System.out.println("Error al enviar el archivo json");
-    }
-
   }
 
   public void enviarArchivo(String nombreArchivo, PrintStream ps) throws IOException {

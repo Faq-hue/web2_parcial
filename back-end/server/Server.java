@@ -9,19 +9,15 @@ import java.net.ServerSocket;
 public class Server {
     // private static final int PORT=8877;
     public void IniciarServidor(int Puerto) {
-        try {
-            //habilitar cors
 
-            ServerSocket server = new ServerSocket(Puerto);
+        try (ServerSocket server = new ServerSocket(Puerto)) {
             System.out.println("Servidor IW2 funcionado en el Puerto: " + Puerto);
             while (true) {
                 new administradorSocket(server.accept()).procesarSocket();
             }
-
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
     }
 }

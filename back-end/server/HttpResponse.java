@@ -5,11 +5,7 @@
  */
 package server;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -21,7 +17,6 @@ import java.net.Socket;
 public class HttpResponse {
 
     PrintWriter salida;
-    private HttpRequest entrada;
     private String header;
     private String HTML_START = "<html><title>Servidor IW2 versión 1.0</title><body>";
     private String HTML_BODY = "<div style='background-color:#00B9FF ; width: 100%;font-weight:bold;font-size: 36px;font-family: Verdana, Geneva, sans-serif;height: 10%; text-align: center'>Servidor IW2 Ver 1.0</div><br><br><hr>";

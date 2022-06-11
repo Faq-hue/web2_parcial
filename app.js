@@ -3,15 +3,15 @@ if (localStorage.getItem("productos") !== null) {
 }
 
 /*Sona de Test */
-
-async function server(){
-  var cosas = await fetch('https://jsonplaceholder.typicode.com/users');
-  var cosas2 = await cosas.json();
-  console.log(cosas2);
+/*async function test () {
+  let producto = await fetch("http://127.0.0.1:8866/api")
+  let productos = await producto.json()
+  console.log(productos)
   
 }
+test();*/
+//test de post un producto
 
-server()
 
 //---------------------
 
@@ -99,7 +99,7 @@ function editar(codigo) {
 
                 <div class="mb-3">
                     <label for="iva">IVA</label>
-                    <select class="form-select" id="iva">
+                    <select class="form-select" id="Eiva">
                         <option selected value="0.1">10%</option>
                         <option value="0.21">21%</option>
                     </select>
@@ -125,8 +125,16 @@ function registarEdicion(codigo) {
   producto.marca = document.getElementById("Emarca").value;
   producto.precio = Number(document.getElementById("Eprecio").value);
   producto.cantidad = Number(document.getElementById("Ecantidad").value);
-  producto.iva = Number(document.getElementById("iva").value);
-
+  producto.iva = Number(document.getElementById("Eiva").value);
+  producto.subtotal =
+    producto.precio * producto.cantidad +
+    producto.precio * producto.cantidad * producto.iva;
+  console.log(producto);
+  list.forEach((e) => {
+    if (e.codigo == codigo) {
+      e = producto;
+    }
+  });
 
   localStorage.setItem("productos", JSON.stringify(list));
   dibujarTabla();
@@ -166,6 +174,7 @@ function dibujarTabla() {
                                   producto.codigo
                                 })">
                                 </td></tr>`;
+    // TODO:ARREGLAR
     total += producto.cantidad;
   });
 
@@ -180,14 +189,6 @@ function verificar(list) {
   const precio = Number(document.getElementById("precio").value);
 
   let aux = false;
-  /*
-        verificar:
-            nombre > 3 letras
-            cantidad > 0
-            codigo debete terner al menos 3 cifras y unico
-            marca > 3 letras
-            precio > 0
-    */
 
   if (!longitud(3, codigo)) {
     alert("El codigo debe tener al menos 3 caracteres");

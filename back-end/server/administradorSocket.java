@@ -6,19 +6,15 @@
 package server;
 
 import com.google.gson.Gson;
-//import static com.iw2.core.Util. System.out.println;
 import dao.ProductoDAO;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import dto.ProductoDTO;
 
@@ -27,12 +23,7 @@ import dto.ProductoDTO;
  */
 public class administradorSocket extends Thread {
   private final Socket conector;
-  private String metodoPedido;
   private String httpPedido;
-  private final String NEW_LINE = "\r\n";
-  private StringBuffer sb;
-  private final String APP_NAME = "api";
-  private String URL;
 
   administradorSocket(Socket insocket) {
     conector = insocket;
@@ -51,18 +42,6 @@ public class administradorSocket extends Thread {
       // socket
       // se lo inyectamos en el constructor
 
-      // habilitar cors
-      try {
-        // habilitar cors
-        conector.getOutputStream().write("HTTP/1.1 200 OK\r\n".getBytes());
-        conector.getOutputStream().write("Access-Control-Allow-Origin: *\r\n".getBytes());
-        conector.getOutputStream().write("Content-Type: text/html\r\n".getBytes());
-        conector.getOutputStream().write("\r\n".getBytes());
-        conector.close();
-      } catch (IOException ex) {
-        Logger.getLogger(administradorSocket.class.getName()).log(Level.SEVERE, null, ex);
-      }
-
       InputStream flujoentrada = conector.getInputStream();
       BufferedReader buffer = new BufferedReader(new InputStreamReader(flujoentrada));
       // necesitamos un printStream para enviar archivos
@@ -75,7 +54,7 @@ public class administradorSocket extends Thread {
         return;
 
       StringTokenizer tokenizer = new StringTokenizer(header);
-      metodoPedido = tokenizer.nextToken();
+      tokenizer.nextToken();
       httpPedido = tokenizer.nextToken();
       httpPedido = header + "\r\n";
 
@@ -93,7 +72,7 @@ public class administradorSocket extends Thread {
       HttpRequest req = new HttpRequest(httpPedido);
       HttpResponse resp = new HttpResponse(conector);
 
-      // AHORA PARA VER SI TODO ESTA OK VAMOS A GENERAR UN ECHO AL WEB BROWSER
+      // AHORA PARA VER SI TOD,O ESTA OK VAMOS A GENERAR UN ECHO AL WEB BROWSER
       // ANTES QUE NADA SE ENVIA UN ENCABEZADO DE ESTADO Y AUTORIZACION PARA CORS SINO
       // NO FUNCIONA
       // DESDE OTROS SITIOS EXTERNOS, POR EJEMPLO ALGO QUE HAGAMOS CON ANGULARJS Y
@@ -112,11 +91,36 @@ public class administradorSocket extends Thread {
           String hacer = req.getAccion();
 
           // ANALIZAMOS LAS ACCIONES
-          if (hacer.equalsIgnoreCase("saludar")) {
-            System.out.println("HACER SALUDAR");
-            req.enviarJson("{'casa':'manfredi'}", ps);
-          }
+          if (hacer.equals("api")) {
+            ProductoDTO pDTO = new ProductoDTO();
+            ProductoDAO pDAO = new ProductoDAO();
+            List<ProductoDTO> listaProductos = pDAO.readAll();
+            ProductoDTO producto = new ProductoDTO();
+            Gson gson = new Gson();
+            String listadoJson = "[";
 
+            for (int i = 0; i < listaProductos.size(); i++) {
+              producto = (ProductoDTO) listaProductos.get(i);
+              listadoJson += gson.toJson(producto) + ",";
+            }
+
+            listadoJson = listadoJson.substring(0, listadoJson.length() - 1);
+            listadoJson += "]";
+
+            // resp.enviarRespuesta
+            System.out.println(gson.toJson((ProductoDTO) pDTO));
+            PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) pDTO));
+            resp.imprimirSalida(resp.getHeader());
+            resp.imprimirSalida(listadoJson);
+
+          } else {
+            if (req.getAccion().equals(" ")) {
+              PaginaInicio = resp.getHeader();
+              PaginaInicio = resp.getInitPage("Servidor Del Segundo parcial de web II");
+              resp.imprimirSalida(PaginaInicio);
+            } else
+              req.enviarArchivo("", ps);
+          }
         }
       }
 
@@ -128,29 +132,25 @@ public class administradorSocket extends Thread {
 
           // ANALIZAMOS LAS ACCIONES
 
-          if (hacer.equalsIgnoreCase("Listar")) {
+          if (hacer.equalsIgnoreCase("api")) {
             System.out.println("estoy en Listar del Post");
-            ProductoDTO lib = new ProductoDTO();
-            ProductoDAO ldao = new ProductoDAO();
-            List<ProductoDTO> listadoLibros;
-            listadoLibros = ldao.readAll();
-            ProductoDTO libro = new ProductoDTO();
+            ProductoDTO pDTO = new ProductoDTO();
+            ProductoDAO pDAO = new ProductoDAO();
+            List<ProductoDTO> listaProductos = pDAO.readAll();
+            ProductoDTO producto = new ProductoDTO();
             Gson gson = new Gson();
-            String listadoJSON = "[";
-
-            for (int t = 0; t < listadoLibros.size(); t++) {
-              libro = (ProductoDTO) listadoLibros.get(t);
-
-              listadoJSON += gson.toJson(libro) + ",";
-            }
-            listadoJSON = listadoJSON.substring(0, listadoJSON.length() - 1);
-            listadoJSON += "]";
-            // resp.enviarRespuestaDatos(200, resp.getInitPage("Hola Mundo !!!"));
-            System.out.println(gson.toJson((ProductoDTO) lib));
-            PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) lib));
+            String params = req.getParametrosPost();
+            // extraer el body del params
+            String body = params.substring(params.indexOf("=") + 1, params.length());
+            System.out.println("body: " + body);
+            pDTO = gson.fromJson(body, ProductoDTO.class);
+            System.out.println("pDTO: " + pDTO);
+            pDAO.create(pDTO);
+            PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) pDTO));
             resp.imprimirSalida(resp.getHeader());
-            resp.imprimirSalida(listadoJSON);
-          } // no piden ninguna accion enviamos un archivo, por defecto es index.html
+            resp.imprimirSalida(PaginaInicio);
+
+          }
 
           if (hacer.trim().equalsIgnoreCase("Buscar")) {
             System.out.println("estoy en Buscar del Post");
@@ -178,13 +178,6 @@ public class administradorSocket extends Thread {
             resp.imprimirSalida(listadoJSON);
           } // no piden ninguna accion enviamos un archivo, por defecto es index.html
 
-          if (req.getAccion().equals(" ")) // no pidieron nada enviamos pagina principal
-          {
-            PaginaInicio = resp.getHeader();
-            PaginaInicio += resp.getInitPage("hola desde el servidor IW2");
-            resp.imprimirSalida(PaginaInicio);
-          }
-
         }
 
       }
@@ -192,7 +185,9 @@ public class administradorSocket extends Thread {
       resp.cerrar();
       conector.close();
 
-    } catch (Exception ex) {
+    } catch (
+
+    Exception ex) {
       System.out.println(ex.getMessage());
     }
 
