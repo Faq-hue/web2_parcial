@@ -31,8 +31,8 @@ public class HttpResponse {
 
     public HttpResponse(Socket s) throws IOException {
         salida = new PrintWriter(s.getOutputStream()); // permite imprimir lineas
-
     }
+
     // Euncion para generar el Encabezado de la Respuesta
     public String getHeader() {
         header = "HTTP/1.0 200 OK" + NEW_LINE;
@@ -41,7 +41,8 @@ public class HttpResponse {
 
         return header;
     }
-    // Funcion para generar la página inicial 
+
+    // Funcion para generar la página inicial
     public String getInitPage(String innerHtml) {
         String PaginaInicial = NEW_LINE;
         PaginaInicial += this.HTML_START;
@@ -55,6 +56,7 @@ public class HttpResponse {
         PaginaInicial += "</div>" + this.HTML_END;
         return PaginaInicial;
     }
+
     // Funcion Echo, devuelve un eco con la info recibida
     public String getEcho(String[] parametros) {
         // este método devuelve una página simple de bienvenida
@@ -78,6 +80,7 @@ public class HttpResponse {
         paginaEcho = responseHeader + NEW_LINE + initPage;
         return paginaEcho;
     }
+
     // impresion de control por el System Out
     public void imprimirSalida(String Mensaje) {
         System.out.println(Mensaje);
@@ -88,6 +91,7 @@ public class HttpResponse {
     public void cerrar() {
         salida.close();
     }
+
     // Declaracion de las constantes de Encabezado
     private static class Headers {
         public static final String SERVER = "IW2 - Server";

@@ -2,6 +2,19 @@ if (localStorage.getItem("productos") !== null) {
   dibujarTabla();
 }
 
+/*Sona de Test */
+
+async function server(){
+  var cosas = await fetch('https://jsonplaceholder.typicode.com/users');
+  var cosas2 = await cosas.json();
+  console.log(cosas2);
+  
+}
+
+server()
+
+//---------------------
+
 function registar() {
   let list = JSON.parse(localStorage.getItem("productos"));
 

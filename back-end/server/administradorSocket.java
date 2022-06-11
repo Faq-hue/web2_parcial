@@ -5,19 +5,20 @@
  */
 package server;
 
-//import com.google.gson.Gson;
+import com.google.gson.Gson;
 //import static com.iw2.core.Util. System.out.println;
 import dao.ProductoDAO;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import dto.ProductoDTO;
 
@@ -49,6 +50,18 @@ public class administradorSocket extends Thread {
       // creamos un objeto para manipular el pedido. Necesitamos que tenga acceso al
       // socket
       // se lo inyectamos en el constructor
+
+      // habilitar cors
+      try {
+        // habilitar cors
+        conector.getOutputStream().write("HTTP/1.1 200 OK\r\n".getBytes());
+        conector.getOutputStream().write("Access-Control-Allow-Origin: *\r\n".getBytes());
+        conector.getOutputStream().write("Content-Type: text/html\r\n".getBytes());
+        conector.getOutputStream().write("\r\n".getBytes());
+        conector.close();
+      } catch (IOException ex) {
+        Logger.getLogger(administradorSocket.class.getName()).log(Level.SEVERE, null, ex);
+      }
 
       InputStream flujoentrada = conector.getInputStream();
       BufferedReader buffer = new BufferedReader(new InputStreamReader(flujoentrada));
@@ -93,50 +106,21 @@ public class administradorSocket extends Thread {
       System.out.println(req.getMetodo());
 
       // EMPEZAMOS EL ANALISIS DE GET
-
       if (req.getMetodo().trim().equalsIgnoreCase("GET")) {
 
         if (req.getAccion() != null) {
           String hacer = req.getAccion();
 
           // ANALIZAMOS LAS ACCIONES
-
-          if (hacer.equalsIgnoreCase("Listar")) {
-            ProductoDTO lib = new ProductoDTO();
-            ProductoDAO ldao = new ProductoDAO();
-            List<ProductoDTO> listadoLibros;
-            listadoLibros = ldao.readAll();
-            ProductoDTO libro = new ProductoDTO();
-            // TODO agregar GSON
-            Gson gson = new Gson();
-            String listadoJSON = "[";
-
-            for (int t = 0; t < listadoLibros.size(); t++) {
-              libro = (ProductoDTO) listadoLibros.get(t);
-
-              listadoJSON += gson.toJson(libro) + ",";
-            }
-            listadoJSON = listadoJSON.substring(0, listadoJSON.length() - 1);
-            listadoJSON += "]";
-            // resp.enviarRespuestaDatos(200, resp.getInitPage("Hola Mundo !!!"));
-            System.out.println(gson.toJson((ProductoDTO) lib));
-            PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) lib));
-            resp.imprimirSalida(resp.getHeader());
-            resp.imprimirSalida(listadoJSON);
-          } else { // no piden ninguna accion enviamos un archivo, por defecto es index.html
-            if (req.getAccion().equals(" ")) // no pidieron nada enviamos pagina principal
-            {
-              PaginaInicio = resp.getHeader();
-              PaginaInicio += resp.getInitPage("hola desde el servidor IW2");
-              resp.imprimirSalida(PaginaInicio);
-            } else { // pidieron un archivo, lo enviamos
-              req.enviarArchivo("", ps);
-            }
+          if (hacer.equalsIgnoreCase("saludar")) {
+            System.out.println("HACER SALUDAR");
+            req.enviarJson("{'casa':'manfredi'}", ps);
           }
+
         }
       }
-      // EMPEZAMOS EL ANALISIS DE POST
 
+      // EMPEZAMOS EL ANALISIS DE POST
       if (req.getMetodo().trim().equalsIgnoreCase("POST")) {
         System.out.println("estoy en Post");
         if (req.getAccion() != null) {

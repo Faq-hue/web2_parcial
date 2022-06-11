@@ -11,9 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.Socket;
 import java.util.StringTokenizer;
 
 /**
@@ -79,34 +77,36 @@ public class HttpRequest {
     }
     return parametros;
   }
-    public String getParametrosPost() throws IOException {
 
-        String parametros_post = null;
-        String[] palabras = HttpRequest[0].split("/");
-        String Pedido = palabras[1].substring(0, palabras[1].indexOf("HTTP"));
-        Sout(Pedido);
-        int posicion_parametros = 0;
-        if (Pedido.length() > 0) {
-            for (int t = 0; t < HttpRequest.length; t++) {
-                if (HttpRequest[t].contains("Content-Length")) { // los parametros vienen despues de la linea en blanco posterior a esta instruccion
-                    posicion_parametros = t + 2;
-                }
-            }
-            parametros_post = null;
-            for (int t = posicion_parametros; t < HttpRequest.length; t++) {
-                parametros_post += HttpRequest[t];
-            }
-            
-            if (parametros_post != null) {
-                Sout("Estoy en length >0");
-                Sout("Parametros Post " + parametros_post);
-            } else {
-                Sout("Estoy en no envíe parametros ....");
-                Sout("Parametros Post " + parametros_post);
-            }
+  public String getParametrosPost() throws IOException {
+
+    String parametros_post = null;
+    String[] palabras = HttpRequest[0].split("/");
+    String Pedido = palabras[1].substring(0, palabras[1].indexOf("HTTP"));
+    Sout(Pedido);
+    int posicion_parametros = 0;
+    if (Pedido.length() > 0) {
+      for (int t = 0; t < HttpRequest.length; t++) {
+        if (HttpRequest[t].contains("Content-Length")) { // los parametros vienen despues de la linea en blanco
+                                                         // posterior a esta instruccion
+          posicion_parametros = t + 2;
         }
-        return parametros_post;
+      }
+      parametros_post = null;
+      for (int t = posicion_parametros; t < HttpRequest.length; t++) {
+        parametros_post += HttpRequest[t];
+      }
+
+      if (parametros_post != null) {
+        Sout("Estoy en length >0");
+        Sout("Parametros Post " + parametros_post);
+      } else {
+        Sout("Estoy en no envíe parametros ....");
+        Sout("Parametros Post " + parametros_post);
+      }
     }
+    return parametros_post;
+  }
 
   public String getValorParametro(String parametro) throws IOException {
     String Busqueda = parametro;
@@ -133,6 +133,30 @@ public class HttpRequest {
       headerBody += "HTTP-HEADER: " + linea + "\n\r";
     }
     return headerBody;
+  }
+
+  /**
+   * Funcion que envia un archivo Json al que realizo la peticion
+   * 
+   * @param json es el archivo json que queremos enviar
+   * @param ps   es el flujo de salida
+   * @throws IOException
+   */
+
+  public void enviarJson(String json, PrintStream ps) {
+    try {
+      ps.println("HTTP/1.1 200 OK");
+      ps.println("Content-Type: application/json");
+      ps.println("Content-Length: " + json.length());
+      ps.println("Connection: close");
+      ps.println("");
+      ps.println(json);
+      ps.flush();
+      ps.close();
+    } catch (Exception e) {
+      System.out.println("Error al enviar el archivo json");
+    }
+
   }
 
   public void enviarArchivo(String nombreArchivo, PrintStream ps) throws IOException {
