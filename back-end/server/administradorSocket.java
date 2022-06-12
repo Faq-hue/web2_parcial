@@ -136,19 +136,38 @@ public class administradorSocket extends Thread {
             System.out.println("estoy en Listar del Post");
             ProductoDTO pDTO = new ProductoDTO();
             ProductoDAO pDAO = new ProductoDAO();
-            List<ProductoDTO> listaProductos = pDAO.readAll();
-            ProductoDTO producto = new ProductoDTO();
             Gson gson = new Gson();
             String params = req.getParametrosPost();
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             // extraer el body del params
-            String body = params.substring(params.indexOf("=") + 1, params.length());
-            System.out.println("body: " + body);
-            pDTO = gson.fromJson(body, ProductoDTO.class);
-            System.out.println("pDTO: " + pDTO);
-            pDAO.create(pDTO);
-            PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) pDTO));
-            resp.imprimirSalida(resp.getHeader());
-            resp.imprimirSalida(PaginaInicio);
+            String body = params.substring(params.indexOf("body") + 1, params.length());
+
+            String test = params.substring(params.indexOf("form-data; name=") + 11, params.length());
+            System.out.println("Test:" + test);
+
+            String test2[] = test.split("name=\"");
+
+            for (int i = 1; i < test2.length; i++) {
+              // quitar el primer " que encuentre
+              // System.out.println(test2[i].indexOf("-"));
+              test2[i] = test2[i].substring(test2[i].indexOf("\"") + 1);
+              // quitar el guion del final
+              test2[i] = test2[i].substring(0, test2[i].indexOf("-"));
+            }
+
+            ProductoDTO pd = new ProductoDTO();
+
+            pd.setCodigo(Integer.parseInt(test2[1]));
+            pd.setNombre(test2[2]);
+            pd.setDescripcion(test2[3]);
+            pd.setMarca(test2[4]);
+            pd.setPrecioUnitario(Float.parseFloat(test2[5]));
+            pd.setCantidad(Integer.parseInt(test2[6]));
+
+            System.out.println(pd.toString());
+
+            pDAO.create(pd);
+            
 
           }
 
