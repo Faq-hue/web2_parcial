@@ -17,12 +17,14 @@ test();*/
 
 function registar() {
   let list = JSON.parse(localStorage.getItem("productos"));
+  console.log("ACA TOY");
 
   if (list === null) {
     list = [];
   }
 
   if (verificar(list)) {
+    preventDefault();
     return;
   }
 
@@ -47,7 +49,6 @@ function registar() {
 
   localStorage.setItem("productos", JSON.stringify(list));
 
-  //TODO: refactor dibujarTabla
   dibujarTabla();
 }
 

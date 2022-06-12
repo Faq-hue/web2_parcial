@@ -134,14 +134,11 @@ public class administradorSocket extends Thread {
 
           if (hacer.equalsIgnoreCase("api")) {
             System.out.println("estoy en Listar del Post");
-            ProductoDTO pDTO = new ProductoDTO();
             ProductoDAO pDAO = new ProductoDAO();
-            Gson gson = new Gson();
             String params = req.getParametrosPost();
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            
             // extraer el body del params
-            String body = params.substring(params.indexOf("body") + 1, params.length());
-
             String test = params.substring(params.indexOf("form-data; name=") + 11, params.length());
             System.out.println("Test:" + test);
 
@@ -149,7 +146,6 @@ public class administradorSocket extends Thread {
 
             for (int i = 1; i < test2.length; i++) {
               // quitar el primer " que encuentre
-              // System.out.println(test2[i].indexOf("-"));
               test2[i] = test2[i].substring(test2[i].indexOf("\"") + 1);
               // quitar el guion del final
               test2[i] = test2[i].substring(0, test2[i].indexOf("-"));
@@ -163,6 +159,7 @@ public class administradorSocket extends Thread {
             pd.setMarca(test2[4]);
             pd.setPrecioUnitario(Float.parseFloat(test2[5]));
             pd.setCantidad(Integer.parseInt(test2[6]));
+            //pd.setIva(Float.parseFloat(test2[7]));
 
             System.out.println(pd.toString());
 

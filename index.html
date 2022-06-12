@@ -16,7 +16,7 @@
   <body>
     <div class="container">
       <div class="formulario">
-        <form action="http://127.0.0.1:8866/api" enctype="multipart/form-data" method="POST">
+        <form action="http://127.0.0.1:8866/api" enctype="multipart/form-data" method="post" onsubmit="registar()">
           <h1>Ingreso de productos</h1>
           <div class="mb-3">
             <label for="codigo" class="form-label">Codigo</label>
@@ -96,7 +96,6 @@
               type="submit"
               class="btn btn-success"
               value="Registrar producto"
-              onsubmit="registar()"
             />
           </div>
         </form>
