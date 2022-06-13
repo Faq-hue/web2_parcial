@@ -1,6 +1,5 @@
-if (localStorage.getItem("productos") !== null) {
-  dibujarTabla();
-}
+dibujarTabla();
+
 
 async function registar() {
   let list = pedir();
