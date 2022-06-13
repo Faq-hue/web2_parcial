@@ -21,7 +21,7 @@ async function registar() {
     }
 
     data.forEach((producto) => {
-      if (producto.codigo == codigo && ignorar == 3) {
+      if (producto.codigo == codigo && ignorar == 2) {
         alert("El codigo ya existe");
         aux = false;
       }
@@ -85,7 +85,6 @@ function dibujarTabla() {
       <td>${producto.cantidad}</td>
       <td>${producto.iva}</td>
       <td>${subtotal}</td>
-      <td><button class='btn btn-danger' onclick='eliminar(${producto.codigo})'>Eliminar</button></td>
       </tr>
       `;
     });

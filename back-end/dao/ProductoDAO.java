@@ -78,7 +78,9 @@ public class ProductoDAO implements intCRUD<ProductoDTO> {
 
     @Override
     public boolean update(ProductoDTO e) {
-        try {
+        this.delete(e.getCodigo());
+        return this.create(e);
+        /*try {
             int control = 0;
             PreparedStatement ps = con.getCnn().prepareCall(SQL_UPDATE);
 
@@ -91,6 +93,7 @@ public class ProductoDAO implements intCRUD<ProductoDTO> {
             ps.setFloat(7, e.getIva());
 
             control = ps.executeUpdate();
+            System.out.println(ps.toString());
             if (control > 0) {
                 return true;
             }
@@ -100,7 +103,7 @@ public class ProductoDAO implements intCRUD<ProductoDTO> {
             con.cerrarConexion();
         }
         return false;
-
+*/
     }
 
     @Override

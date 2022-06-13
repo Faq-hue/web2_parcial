@@ -161,12 +161,23 @@ public class administradorSocket extends Thread {
             pd.setCantidad(Integer.parseInt(test2[6]));
             pd.setIva(Float.parseFloat(test2[7]));
 
-            ///System.out.println("ACA ESTOY PELOTUDO"+test2[8]);
+            //System.out.println("ACA ESTOY PELOTUDO"+test2[8]);
 
             System.out.println(pd.toString());
 
-            pDAO.create(pd);
-            
+            int accion = Integer.parseInt(test2[8]);
+
+            switch (accion) {
+              case 2:
+                pDAO.create(pd);
+                break;
+              case 1:
+                pDAO.delete(pd.getCodigo());
+                break;
+              case 0:
+                pDAO.update(pd);
+                break;
+            }
 
           }
 
