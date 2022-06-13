@@ -159,7 +159,9 @@ public class administradorSocket extends Thread {
             pd.setMarca(test2[4]);
             pd.setPrecioUnitario(Float.parseFloat(test2[5]));
             pd.setCantidad(Integer.parseInt(test2[6]));
-            //pd.setIva(Float.parseFloat(test2[7]));
+            pd.setIva(Float.parseFloat(test2[7]));
+
+            ///System.out.println("ACA ESTOY PELOTUDO"+test2[8]);
 
             System.out.println(pd.toString());
 
@@ -167,32 +169,6 @@ public class administradorSocket extends Thread {
             
 
           }
-
-          if (hacer.trim().equalsIgnoreCase("Buscar")) {
-            System.out.println("estoy en Buscar del Post");
-            ProductoDTO lib = new ProductoDTO();
-            ProductoDAO ldao = new ProductoDAO();
-            List<ProductoDTO> listadoLibros;
-            Gson gson = new Gson();
-            String pp = req.getParametrosPost();
-            if (pp != null) {
-            }
-            // listadoLibros = ldao.read(300);
-            ProductoDTO libro = new ProductoDTO();
-            libro = ldao.read(300);
-            String listadoJSON = "[";
-
-            listadoJSON += gson.toJson(libro) + ",";
-
-            listadoJSON = listadoJSON.substring(0, listadoJSON.length() - 1);
-            listadoJSON += "]";
-
-            // resp.enviarRespuestaDatos(200, resp.getInitPage("Hola Mundo !!!"));
-            System.out.println(gson.toJson((ProductoDTO) lib));
-            PaginaInicio = resp.getInitPage(gson.toJson((ProductoDTO) lib));
-            resp.imprimirSalida(resp.getHeader());
-            resp.imprimirSalida(listadoJSON);
-          } // no piden ninguna accion enviamos un archivo, por defecto es index.html
 
         }
 

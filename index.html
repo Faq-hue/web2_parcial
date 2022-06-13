@@ -16,7 +16,7 @@
   <body>
     <div class="container">
       <div class="formulario">
-        <form action="http://127.0.0.1:8866/api" enctype="multipart/form-data" method="post" onsubmit="registar()">
+        <form action="http://127.0.0.1:8866/api" enctype="multipart/form-data" method="post" onsubmit="return registar()">
           <h1>Ingreso de productos</h1>
           <div class="mb-3">
             <label for="codigo" class="form-label">Codigo</label>
@@ -82,12 +82,21 @@
               placeholder="Ingrese una cantidad"
             />
           </div>
-
+          
           <div class="mb-3">
             <label for="iva">IVA</label>
-            <select class="form-select" id="iva">
-              <option selected value="0.1">10%</option>
+            <select class="form-control" name="iva" id="iva">
+              <option value="0.10">10%</option>
               <option value="0.21">21%</option>
+            </select>
+          </div>
+
+           <div class="mb-3">
+            <label for="accion">Accion</label>
+            <select class="form-control" name="accion" id="accion">
+              <option value="2">Agregar</option>
+              <option value="1">Borrar</option>
+              <option value="0">Editar</option>
             </select>
           </div>
 
